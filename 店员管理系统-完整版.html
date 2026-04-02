@@ -1,0 +1,3181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>店员管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --success-color: #4CAF50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 40px;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin-bottom: 25px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: var(--bg-light);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background-color: var(--white);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-color);
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-success::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-success:hover::before {
+            left: 100%;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-warning::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-warning:hover::before {
+            left: 100%;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            padding: 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            background: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .mode-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .mode-btn.selected {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .customer-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .customer-item {
+            padding: 18px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+        }
+
+        .customer-item:hover {
+            background: var(--bg-light);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .customer-item.selected {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .customer-item.reminder {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+        
+        .customer-item.reminder:hover {
+            background: linear-gradient(135deg, #ee5a52, #c0392b);
+            transform: translateX(8px);
+        }
+
+        .customer-info {
+            background: var(--bg-light);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-item {
+            padding: 16px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .info-item label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .info-item .value.positive {
+            color: var(--success-color);
+        }
+
+        .info-item .value.negative {
+            color: var(--error-color);
+        }
+
+        .operation-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .operation-btn {
+            padding: 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            background: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .operation-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .operation-btn.selected {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .edit-form {
+            background: var(--bg-light);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .edit-form h3 {
+            margin-bottom: 24px;
+            color: var(--text-color);
+        }
+
+        .receipt {
+            background: var(--bg-light);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .receipt h3 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--text-color);
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .receipt-item strong {
+            color: var(--text-color);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .history-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-table tr {
+            transition: var(--transition);
+        }
+
+        .history-table tr:hover {
+            background-color: var(--bg-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .history-table tr:nth-child(even) {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .clerk-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .clerk-info h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .menu-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .menu-btn {
+            padding: 30px;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .menu-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .menu-btn h3 {
+            margin-bottom: 10px;
+        }
+
+        .new-customer-btn {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .new-customer-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <script>
+        // 提前定义showSection函数，确保页面元素可以调用
+        function showSection(sectionId) {
+            // 隐藏所有section
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 显示指定section
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="customerReminder" style="background-color: #ffebee; border-left: 4px solid #ff4757; padding: 15px; margin-bottom: 20px; display: none;">
+            <p style="color: #c62828; font-weight: bold; margin: 0;">⚠️ 您有顾客商品即将用完，请及时联系。</p>
+        </div>
+        <h1>店员管理系统</h1>
+        
+        <!-- 首页和登录页面 -->
+        <div class="step active" id="step0">
+            <!-- 登录表单 -->
+            <div id="loginSection" class="section active">
+                <h3>店员登录</h3>
+                <div class="form-group">
+                    <label for="clerkName">店员姓名</label>
+                    <input type="text" id="clerkName" placeholder="请输入店员姓名">
+                </div>
+                <div class="form-group">
+                    <label for="shopName">店铺名称</label>
+                    <input type="text" id="shopName" placeholder="请输入店铺名称">
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; justify-content: space-between;">
+                    <label style="display: flex; align-items: center; gap: 8px; margin: 0;">
+                        <input type="checkbox" id="rememberMe">
+                        记住我
+                    </label>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <button class="btn-primary" onclick="handleClerkLogin()" style="width: 100%;">登录</button>
+                </div>
+                <div style="text-align: right;">
+                    <button class="btn-secondary" onclick="showSection('registerSection')" style="background: rgba(102, 126, 234, 0.1); color: var(--primary-color); border: 2px solid var(--primary-color); border-radius: 8px; padding: 8px 16px; font-size: 16px; cursor: pointer; transition: all 0.3s ease; font-weight: 500;">
+                        注册
+                    </button>
+                </div>
+            </div>
+
+            <!-- 注册表单 -->
+            <div id="registerSection" class="section">
+                <button class="back-btn" onclick="showSection('loginSection')">返回</button>
+                <h3>注册新账号</h3>
+                <div class="form-group">
+                    <label for="registerClerkName">店员姓名</label>
+                    <input type="text" id="registerClerkName" placeholder="请输入店员姓名">
+                </div>
+                <div class="form-group">
+                    <label for="registerShopName">店铺名称</label>
+                    <input type="text" id="registerShopName" placeholder="请输入店铺名称">
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="handleClerkRegister()">注册</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 2: 选择工作模式 -->
+        <div class="step" id="step2">
+            <button class="back-btn" onclick="prevStep('step9')">返回</button>
+            <div class="clerk-info" id="clerkInfo">
+                <h3>店员: <span id="currentClerk"></span> | 店铺: <span id="currentShop"></span></h3>
+            </div>
+            
+            <h3 style="margin-bottom: 20px;">选择工作模式</h3>
+            
+            <div class="mode-buttons">
+                <div class="mode-btn" onclick="selectWorkMode('personal')">
+                    <h4>模式一：个人专属</h4>
+                    <p>仅显示本人名下客户</p>
+                </div>
+                <div class="mode-btn" onclick="selectWorkMode('global')">
+                    <h4>模式二：全局共享</h4>
+                    <p>显示全部客户</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 3: 客户查找 -->
+        <div class="step" id="step3">
+            <button class="back-btn" onclick="prevStep('step2')">返回</button>
+            <h3>客户管理</h3>
+            
+            <div class="search-box">
+                <input type="text" id="searchKeyword" placeholder="按姓名或手机号查找">
+                <button class="btn-primary" onclick="searchCustomers()">查找</button>
+            </div>
+            
+            <button class="new-customer-btn" onclick="showNewCustomerModal()">+ 新增客户</button>
+            
+            <div class="customer-list" id="customerList">
+                <!-- 客户列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 步骤 4: 客户信息与编辑 -->
+        <div class="step" id="step4">
+            <button class="back-btn" onclick="prevStep('step3')">返回</button>
+            <h3>客户详情与编辑</h3>
+            
+            <div class="customer-info" id="customerInfo">
+                <!-- 客户信息将通过JavaScript动态生成 -->
+            </div>
+            
+            <!-- 编辑购买和用量数量模块 -->
+            <div class="edit-form">
+                <h3 style="margin-bottom: 20px; color: #667eea;">编辑客户数据</h3>
+                <div class="form-group">
+                    <label>当前购买数量</label>
+                    <input type="number" id="currentBuyQuantity" readonly style="background: #e9ecef;">
+                </div>
+                <div class="form-group">
+                    <label>再次购买数量</label>
+                    <input type="number" id="newBuyQuantity" placeholder="请输入再次购买数量" min="0" step="1" value="0">
+                </div>
+                <div class="form-group">
+                    <label>当前已用数量</label>
+                    <input type="number" id="currentTraceQuantity" readonly style="background: #e9ecef;">
+                </div>
+                <div class="form-group">
+                    <label>本次取用数量</label>
+                    <input type="number" id="newTraceQuantity" placeholder="请输入本次取用数量" min="0" step="1" value="0">
+                </div>
+                <div class="form-group">
+                    <label>剩余盒数（自动计算）</label>
+                    <input type="number" id="remainingTotal" readonly style="background: #e9ecef;">
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="submitCombinedEdit()">确认保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 5: 操作确认 -->
+        <div class="step" id="step5">
+            <button class="back-btn" onclick="prevStep('step4')">返回</button>
+            <h3>操作确认</h3>
+            
+            <div class="receipt" id="receipt">
+                <!-- 收据内容将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-secondary" onclick="prevStep('step4')">重新操作</button>
+                <button class="btn-primary" onclick="completeOperation()">确认完成</button>
+            </div>
+        </div>
+
+        <!-- 步骤 8: 历史查询 -->
+        <div class="step" id="step8">
+            <button class="back-btn" onclick="prevStep('step9')">返回</button>
+            <h3>历史记录查询</h3>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('logs')">操作日志</div>
+                <div class="tab" onclick="switchTab('reconciliation')">查看对账</div>
+            </div>
+            
+            <div class="tab-content active" id="logsTab">
+                <div class="form-group">
+                    <label for="queryCustomer">按客户查询</label>
+                    <input type="text" id="queryCustomer" placeholder="请输入客户姓名或手机尾号">
+                </div>
+                
+                <div class="form-group">
+                    <label for="queryProduct">按商品查询</label>
+                    <input type="text" id="queryProduct" placeholder="请输入商品名称">
+                </div>
+                
+                <div class="form-group">
+                    <label for="queryDate">按日期查询</label>
+                    <input type="date" id="queryDate">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="queryHistory()">查询</button>
+                </div>
+                
+                <div id="historyResult">
+                    <!-- 查询结果将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <div class="tab-content" id="reconciliationTab">
+                <div class="filter-section" style="background: #f8f9fa; padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #667eea;">时间筛选</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; align-items: end;">
+                        <div class="form-group">
+                            <label for="timePeriod">固定周期</label>
+                            <select id="timePeriod" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: var(--border-radius); font-size: 14px;">
+                                <option value="today">今日</option>
+                                <option value="yesterday">昨日</option>
+                                <option value="7days">近 7 天</option>
+                                <option value="30days" selected>近 30 天</option>
+                                <option value="90days">近 90 天</option>
+                                <option value="thisMonth">本月</option>
+                                <option value="lastMonth">上月</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">开始日期</label>
+                            <input type="date" id="startDate" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: var(--border-radius); font-size: 14px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">结束日期</label>
+                            <input type="date" id="endDate" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: var(--border-radius); font-size: 14px;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
+                        <button class="btn-primary" onclick="handleQuery()" style="padding: 10px 20px;">查询</button>
+                        <button class="btn-secondary" onclick="resetReconciliationFilter()" style="padding: 10px 20px;">重置</button>
+                        <p style="margin: 0; color: #666; font-size: 14px;">当前账号最多可查询【180】天历史数据</p>
+                    </div>
+                </div>
+                <div id="reconciliationResult">
+                    <!-- 对账结果将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 步骤 10: 商品消耗预测 -->
+        <div class="step" id="step10" onload="loadProductPrediction()">
+            <button class="back-btn" onclick="prevStep('step9'); loadProductPrediction();">返回</button>
+            <h3>商品消耗预测</h3>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px;">
+                <h4 style="margin-bottom: 15px; color: #667eea;">预测查询</h4>
+                <div class="search-box">
+                    <input type="text" id="customerSearch" placeholder="请输入顾客姓名或手机尾号" style="flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: var(--border-radius); font-size: 16px;">
+                    <button class="btn-primary" onclick="searchCustomerPredictions()" style="padding: 0 24px;">搜索</button>
+                </div>
+            </div>
+            
+            <div id="predictionResults">
+                <div style="text-align: center; padding: 40px; color: #666;">
+                    请输入顾客姓名或手机尾号进行搜索
+                </div>
+            </div>
+            
+            <!-- 补货预警列表 -->
+            <div style="margin-top: 30px;">
+                <h4 style="margin-bottom: 15px; color: #ff6b6b;">⚠️ 补货预警</h4>
+                <div id="remindListContainer">
+                    <!-- 预警列表将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤 9: 主菜单 -->
+        <div class="step" id="step9">
+            <div class="clerk-info">
+                <h3>店员: <span id="menuClerk"></span> | 店铺: <span id="menuShop"></span></h3>
+                <p>工作模式: <span id="currentMode"></span></p>
+            </div>
+            
+            <h3 style="margin-bottom: 30px;">主菜单</h3>
+            
+            <div class="menu-buttons">
+                <div class="menu-btn" onclick="goToCustomerManagement()">
+                    <h3>客户管理</h3>
+                    <p>管理客户信息和操作</p>
+                </div>
+                <div class="menu-btn" onclick="nextStep('step8')">
+                    <h3>历史查询</h3>
+                    <p>查看操作日志和对账</p>
+                </div>
+                <div class="menu-btn" onclick="nextStep('step10')">
+                    <h3>商品消耗预测</h3>
+                    <p>预测商品消耗和补货提醒</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增客户模态框 -->
+    <div class="modal" id="newCustomerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增客户</h2>
+                <button class="close-btn" onclick="closeModal('newCustomerModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="newCustomerName">客户姓名 *</label>
+                <input type="text" id="newCustomerName" placeholder="请输入客户姓名">
+            </div>
+            <div class="form-group">
+                <label for="newCustomerPhone">手机号 *</label>
+                <input type="text" id="newCustomerPhone" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+                <label for="newCustomerProduct">购买产品</label>
+                <div style="position: relative;">
+                    <input type="text" id="newCustomerProduct" list="productList" placeholder="请输入或选择产品" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: var(--border-radius); font-size: 16px; background: white;">
+                    <datalist id="productList">
+                        <!-- 动态生成产品选项 -->
+                    </datalist>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="newCustomerBuy">初始购买数量</label>
+                <input type="number" id="newCustomerBuy" placeholder="请输入初始购买数量" min="0" step="1" value="0">
+            </div>
+            <div class="form-group">
+                <label for="newCustomerTrace">初始已用数量</label>
+                <input type="number" id="newCustomerTrace" placeholder="请输入初始已用数量" min="0" step="1" value="0">
+            </div>
+            <div class="button-group">
+                <button class="btn-secondary" onclick="closeModal('newCustomerModal')">取消</button>
+                <button class="btn-primary" onclick="addNewCustomer()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentClerk = '';
+        let currentShop = '';
+        let currentMode = '';
+        let currentCustomer = null;
+        let selectedOperation = '';
+        let operationData = {};
+        
+        // 数据存储
+        let clerks = JSON.parse(localStorage.getItem('fullSystemClerks')) || {};
+        let customers = JSON.parse(localStorage.getItem('fullSystemCustomers')) || [];
+        let logs = JSON.parse(localStorage.getItem('fullSystemLogs')) || [];
+        
+        // 切换section
+        function showSection(sectionId) {
+            // 隐藏所有section
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 显示指定section
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        // 工具函数
+        function validatePhone(phone) {
+            return /^1[3-9]\d{9}$/.test(phone);
+        }
+        
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDateTime(date) {
+            return date.toLocaleString('zh-CN');
+        }
+        
+        function calculateRemaining(purchase, trace) {
+            return Math.max(0, (purchase || 0) - (trace || 0));
+        }
+        
+        // 步骤导航
+        function nextStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+            
+            // 如果进入客户管理页面，更新新增客户按钮状态
+            if (stepId === 'step3') {
+                updateNewCustomerButton();
+            }
+            
+            // 如果进入商品消耗预测页面，加载预警列表
+            if (stepId === 'step10') {
+                loadProductPrediction();
+            }
+        }
+        
+        function prevStep(stepId) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+        
+        // 步骤 0-1: 注册
+        function handleClerkRegister() {
+            const clerkName = document.getElementById('registerClerkName').value.trim();
+            const shopName = document.getElementById('registerShopName').value.trim();
+            
+            if (!clerkName || !shopName) {
+                alert('请输入完整的注册信息');
+                return;
+            }
+            
+            if (clerks[clerkName]) {
+                alert('该店员姓名已存在，请直接登录');
+                return;
+            }
+            
+            // 保存店员信息
+            clerks[clerkName] = {
+                name: clerkName,
+                shop: shopName,
+                customers: []
+            };
+            localStorage.setItem('fullSystemClerks', JSON.stringify(clerks));
+            
+            alert('注册成功！请登录');
+            showSection('loginSection');
+        }
+        
+        // 步骤 1: 店员登录
+        function handleClerkLogin() {
+            const clerkName = document.getElementById('clerkName').value.trim();
+            const shopName = document.getElementById('shopName').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            if (!clerkName || !shopName) {
+                alert('请输入完整的登录信息');
+                return;
+            }
+            
+            // 校验是否已注册
+            if (!clerks[clerkName]) {
+                alert('该店员尚未注册，请先注册');
+                return;
+            }
+            
+            // 校验店铺归属
+            if (clerks[clerkName].shop !== shopName) {
+                alert('错误：您的店铺信息与注册信息不一致！');
+                return;
+            }
+            
+            // 记住登录信息
+            if (rememberMe) {
+                const loginInfo = {
+                    clerkName: clerkName,
+                    shopName: shopName,
+                    expireTime: new Date().getTime() + 365 * 24 * 60 * 60 * 1000 // 一年过期
+                };
+                localStorage.setItem('loginInfo', JSON.stringify(loginInfo));
+            }
+            
+            currentClerk = clerkName;
+            currentShop = shopName;
+            
+            document.getElementById('currentClerk').textContent = clerkName;
+            document.getElementById('currentShop').textContent = shopName;
+            document.getElementById('menuClerk').textContent = clerkName;
+            document.getElementById('menuShop').textContent = shopName;
+            
+            nextStep('step9');
+        }
+
+        // 页面加载时自动填充登录信息
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginInfo = localStorage.getItem('loginInfo');
+            if (loginInfo) {
+                const info = JSON.parse(loginInfo);
+                const now = new Date().getTime();
+                
+                // 检查是否过期
+                if (now < info.expireTime) {
+                    document.getElementById('clerkName').value = info.clerkName;
+                    document.getElementById('shopName').value = info.shopName;
+                    document.getElementById('rememberMe').checked = true;
+                } else {
+                    // 过期，清除存储
+                    localStorage.removeItem('loginInfo');
+                }
+            }
+            
+            // 加载产品选项
+            loadProductOptions();
+        });
+
+        // 加载产品选项
+        function loadProductOptions() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            
+            // 从所有客户中提取产品
+            const products = new Set();
+            customers.forEach(customer => {
+                if (customer.products) {
+                    Object.keys(customer.products).forEach(product => {
+                        if (product && product.trim()) {
+                            products.add(product);
+                        }
+                    });
+                }
+            });
+            
+            // 添加到datalist
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product;
+                productList.appendChild(option);
+            });
+        }
+        
+        // 从主菜单进入客户管理
+        function goToCustomerManagement() {
+            nextStep('step2');
+        }
+        
+        // 步骤 2: 选择工作模式
+        function selectWorkMode(mode) {
+            currentMode = mode;
+            document.getElementById('currentMode').textContent = mode === 'personal' ? '个人专属' : '全局共享';
+            nextStep('step3');
+            loadCustomerList();
+            updateNewCustomerButton();
+        }
+        
+        // 更新新增客户按钮状态
+        function updateNewCustomerButton() {
+            const btn = document.querySelector('.new-customer-btn');
+            if (currentMode === 'global') {
+                btn.style.display = 'none';
+            } else {
+                btn.style.display = 'block';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.textContent = '+ 新增客户';
+            }
+        }
+        
+        // 删除顾客
+        function deleteCustomer(customerId) {
+            // 确认删除
+            if (!confirm('确定要删除该顾客吗？')) {
+                return;
+            }
+            
+            // 确保customerId是数字类型
+            const numericCustomerId = Number(customerId);
+            
+            // 找到顾客索引
+            const customerIndex = customers.findIndex(c => c.id === numericCustomerId);
+            if (customerIndex === -1) {
+                alert('顾客不存在');
+                return;
+            }
+            
+            const customer = customers[customerIndex];
+            
+            // 检查是否是当前店员的顾客
+            if (customer.clerk !== currentClerk) {
+                alert('无权删除其他店员的顾客');
+                return;
+            }
+            
+            // 从顾客列表中删除
+            customers.splice(customerIndex, 1);
+            
+            // 从店员的顾客列表中移除
+            if (clerks[currentClerk]) {
+                // 使用数字类型的id查找
+                const clerkCustomerIndex = clerks[currentClerk].customers.findIndex(id => id === numericCustomerId);
+                if (clerkCustomerIndex !== -1) {
+                    clerks[currentClerk].customers.splice(clerkCustomerIndex, 1);
+                }
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+            localStorage.setItem('fullSystemClerks', JSON.stringify(clerks));
+            
+            // 刷新顾客列表
+            loadCustomerList();
+        }
+        
+        // 检查是否有需要提醒的顾客
+        function checkCustomerReminders() {
+            // 筛选当前店员负责的客户
+            let filteredCustomers = customers.filter(customer => 
+                customer.clerk === currentClerk
+            );
+            
+            // 获取已处理的预警
+            const processedReminders = JSON.parse(localStorage.getItem('processedReminders')) || [];
+            
+            // 检查是否有可用天数 ≤3 天的顾客
+            let hasReminder = false;
+            filteredCustomers.forEach(customer => {
+                if (customer.products) {
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                        const prediction = calculateProductPrediction(customer, product);
+                        if (prediction && prediction.daily_usage > 0 && prediction.remaining_days <= 3) {
+                            // 检查是否已经处理过
+                            const isProcessed = processedReminders.some(item => 
+                                item.user_name === customer.name && item.product_name === product
+                            );
+                            if (!isProcessed) {
+                                hasReminder = true;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // 显示或隐藏提醒
+            const reminderDiv = document.getElementById('customerReminder');
+            if (hasReminder) {
+                reminderDiv.style.display = 'block';
+            } else {
+                reminderDiv.style.display = 'none';
+            }
+        }
+        
+        // 加载客户列表
+        function loadCustomerList() {
+            const customerList = document.getElementById('customerList');
+            customerList.innerHTML = '';
+            
+            let filteredCustomers = customers;
+            if (currentMode === 'personal' && clerks[currentClerk]) {
+                // 个人专属模式：只显示当前店员名下的客户
+                filteredCustomers = customers.filter(customer => 
+                    clerks[currentClerk].customers.includes(customer.id)
+                );
+            } else if (currentMode === 'global') {
+                // 全局共享模式：只显示同一店铺的客户
+                filteredCustomers = customers.filter(customer => {
+                    const customerClerk = customer.clerk;
+                    return customerClerk && clerks[customerClerk] && clerks[customerClerk].shop === currentShop;
+                });
+            }
+            
+            if (filteredCustomers.length === 0) {
+                customerList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无客户，请点击上方按钮新增</div>';
+                return;
+            }
+            
+            // 获取已处理的预警
+            const processedReminders = JSON.parse(localStorage.getItem('processedReminders')) || [];
+            
+            filteredCustomers.forEach(customer => {
+                // 检查该顾客是否有需要提醒的商品，并且该顾客是当前店员负责的
+                let needReminder = false;
+                if (customer.clerk === currentClerk && customer.products) {
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                        const prediction = calculateProductPrediction(customer, product);
+                        if (prediction && prediction.daily_usage > 0 && prediction.remaining_days <= 3) {
+                            // 检查是否已经处理过
+                            const isProcessed = processedReminders.some(item => 
+                                item.user_name === customer.name && item.product_name === product
+                            );
+                            if (!isProcessed) {
+                                needReminder = true;
+                            }
+                        }
+                    });
+                }
+                
+                const customerItem = document.createElement('div');
+                customerItem.className = `customer-item ${needReminder ? 'reminder' : ''}`;
+                
+                // 处理产品信息
+                let productInfo = '';
+                if (customer.products && Object.keys(customer.products).length > 0) {
+                    const firstProduct = Object.keys(customer.products)[0];
+                    const product = customer.products[firstProduct];
+                    const unit = '件'; // 统一使用件作为单位
+                    const remaining = product.purchase - product.trace;
+                    productInfo = `购买: ${product.purchase || 0}${unit} | 已用: ${product.trace || 0}${unit} | 剩余: ${remaining}${unit}<br>
+                    <small>产品: ${firstProduct}</small>`;
+                } else {
+                    productInfo = '无产品';
+                }
+                
+                customerItem.innerHTML = `
+                    <div style="flex: 1; display: flex; align-items: flex-start;">
+                        ${needReminder ? `<span style="display: inline-block; width: 8px; height: 8px; background-color: #ff4757; border-radius: 50%; margin-right: 8px; margin-top: 6px;"></span>` : ''}
+                        <div>
+                            <strong>${customer.name}</strong> (${customer.phone})<br>
+                            <small>${productInfo}</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <small>归属: ${customer.clerk || '无'}</small>
+                        ${customer.clerk === currentClerk ? `
+                        <button class="btn-secondary" onclick='event.stopPropagation(); deleteCustomer("${customer.id}");' style="padding: 2px 8px; font-size: 12px;">删除</button>
+                        ` : ''}
+                    </div>
+                `;
+                customerItem.onclick = function(event) {
+                    // 检查点击的目标是否是删除按钮或其后代元素
+                    if (event.target.closest('button') && event.target.closest('button').textContent === '删除') {
+                        return; // 不执行跳转
+                    }
+                    document.querySelectorAll('.customer-item').forEach(item => item.classList.remove('selected'));
+                    customerItem.classList.add('selected');
+                    currentCustomer = customer;
+                    loadCustomerInfo();
+                    nextStep('step4');
+                };
+                customerList.appendChild(customerItem);
+            });
+            
+            // 检查并显示提醒
+            checkCustomerReminders();
+        }
+        
+        // 搜索客户
+        function searchCustomers() {
+            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+            const customerList = document.getElementById('customerList');
+            customerList.innerHTML = '';
+            
+            let filteredCustomers = customers;
+            if (currentMode === 'personal' && clerks[currentClerk]) {
+                // 个人专属模式：只显示当前店员名下的客户
+                filteredCustomers = customers.filter(customer => 
+                    clerks[currentClerk].customers.includes(customer.id)
+                );
+            } else if (currentMode === 'global') {
+                // 全局共享模式：只显示同一店铺的客户
+                filteredCustomers = customers.filter(customer => {
+                    const customerClerk = customer.clerk;
+                    return customerClerk && clerks[customerClerk] && clerks[customerClerk].shop === currentShop;
+                });
+            }
+            
+            if (keyword) {
+                filteredCustomers = filteredCustomers.filter(customer => 
+                    customer.name.toLowerCase().includes(keyword) ||
+                    customer.phone.includes(keyword)
+                );
+            }
+            
+            if (filteredCustomers.length === 0) {
+                customerList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">未找到匹配的客户</div>';
+                return;
+            }
+            
+            // 获取已处理的预警
+            const processedReminders = JSON.parse(localStorage.getItem('processedReminders')) || [];
+            
+            filteredCustomers.forEach(customer => {
+                // 检查该顾客是否有需要提醒的商品，并且该顾客是当前店员负责的
+                let needReminder = false;
+                if (customer.clerk === currentClerk && customer.products) {
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                        const prediction = calculateProductPrediction(customer, product);
+                        if (prediction && prediction.daily_usage > 0 && prediction.remaining_days <= 3) {
+                            // 检查是否已经处理过
+                            const isProcessed = processedReminders.some(item => 
+                                item.user_name === customer.name && item.product_name === product
+                            );
+                            if (!isProcessed) {
+                                needReminder = true;
+                            }
+                        }
+                    });
+                }
+                
+                const customerItem = document.createElement('div');
+                customerItem.className = `customer-item ${needReminder ? 'reminder' : ''}`;
+                
+                // 处理产品信息
+                let productInfo = '';
+                if (customer.products && Object.keys(customer.products).length > 0) {
+                    const firstProduct = Object.keys(customer.products)[0];
+                    const product = customer.products[firstProduct];
+                    const unit = '件'; // 统一使用件作为单位
+                    const remaining = product.purchase - product.trace;
+                    productInfo = `购买: ${product.purchase || 0}${unit} | 已用: ${product.trace || 0}${unit} | 剩余: ${remaining}${unit}<br>
+                    <small>产品: ${firstProduct}</small>`;
+                } else {
+                    productInfo = '无产品';
+                }
+                
+                customerItem.innerHTML = `
+                    <div style="flex: 1; display: flex; align-items: flex-start;">
+                        ${needReminder ? `<span style="display: inline-block; width: 8px; height: 8px; background-color: #ff4757; border-radius: 50%; margin-right: 8px; margin-top: 6px;"></span>` : ''}
+                        <div>
+                            <strong>${customer.name}</strong> (${customer.phone})<br>
+                            <small>${productInfo}</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <small>归属: ${customer.clerk || '无'}</small>
+                        ${customer.clerk === currentClerk ? `
+                        <button class="btn-secondary" onclick='event.stopPropagation(); deleteCustomer("${customer.id}");' style="padding: 2px 8px; font-size: 12px;">删除</button>
+                        ` : ''}
+                    </div>
+                `;
+                customerItem.onclick = function(event) {
+                    // 检查点击的目标是否是删除按钮或其后代元素
+                    if (event.target.closest('button') && event.target.closest('button').textContent === '删除') {
+                        return; // 不执行跳转
+                    }
+                    document.querySelectorAll('.customer-item').forEach(item => item.classList.remove('selected'));
+                    customerItem.classList.add('selected');
+                    currentCustomer = customer;
+                    loadCustomerInfo();
+                    nextStep('step4');
+                };
+                customerList.appendChild(customerItem);
+            });
+        }
+        
+        // 显示新增客户模态框
+        function showNewCustomerModal() {
+            if (currentMode === 'global') {
+                alert('全局共享模式下无法新增客户，请切换到个人专属模式');
+                return;
+            }
+            document.getElementById('newCustomerModal').classList.add('active');
+            document.getElementById('newCustomerName').value = '';
+            document.getElementById('newCustomerPhone').value = '';
+            document.getElementById('newCustomerProduct').value = ''; // 重置产品选择
+            document.getElementById('newCustomerBuy').value = '0';
+            document.getElementById('newCustomerTrace').value = '0';
+            
+            // 重新加载产品选项
+            loadProductOptions();
+        }
+        
+        // 关闭模态框
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // 添加新客户
+        function addNewCustomer() {
+            const name = document.getElementById('newCustomerName').value.trim();
+            const phone = document.getElementById('newCustomerPhone').value.trim();
+            const product = document.getElementById('newCustomerProduct').value;
+            const buy = parseInt(document.getElementById('newCustomerBuy').value) || 0;
+            const trace = parseInt(document.getElementById('newCustomerTrace').value) || 0;
+            
+            if (!name || !phone) {
+                alert('请输入完整的客户信息（姓名和手机号为必填项）');
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                alert('请输入有效的手机号');
+                return;
+            }
+            
+            // 检查手机号是否已存在
+            const existingCustomer = customers.find(c => c.phone === phone);
+            if (existingCustomer) {
+                alert('该手机号已存在');
+                return;
+            }
+            
+            const products = {};
+            if (product) {
+                products[product] = {
+                    purchase: buy,
+                    trace: trace,
+                    current_withdrawal: trace // 首次取货量作为本次取用数量
+                };
+            } else {
+                // 如果没有选择产品，保持空的products对象
+            }
+            
+            const newCustomer = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                products: products,
+                clerk: currentClerk,
+                createdAt: new Date().toISOString()
+            };
+            
+            customers.push(newCustomer);
+            localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+            
+            // 归属到当前店员
+            if (!clerks[currentClerk].customers.includes(newCustomer.id)) {
+                clerks[currentClerk].customers.push(newCustomer.id);
+                localStorage.setItem('fullSystemClerks', JSON.stringify(clerks));
+            }
+            
+            // 生成创建日志
+            const log = {
+                id: Date.now(),
+                clerk: currentClerk,
+                shop: currentShop,
+                customer: newCustomer,
+                product: product || '',
+                operation: '新增客户',
+                details: `创建客户: ${name} (${phone})`,
+                timestamp: new Date().toISOString(),
+                date: formatDate(new Date())
+            };
+            logs.push(log);
+            localStorage.setItem('fullSystemLogs', JSON.stringify(logs));
+            
+            // 重新加载产品选项
+            loadProductOptions();
+            
+            alert('客户创建成功！');
+            closeModal('newCustomerModal');
+            loadCustomerList();
+        }
+        
+        // 全局变量
+        let currentProduct = '';
+        
+        // 加载客户信息
+        function loadCustomerInfo() {
+            if (!currentCustomer) return;
+            
+            // 兼容旧数据结构
+            if (!currentCustomer.products) {
+                currentCustomer.products = {};
+                // 保存更新后的数据
+                localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+            }
+            
+            // 如果currentProduct为空，自动设置为第一个产品
+            if (!currentProduct && Object.keys(currentCustomer.products).length > 0) {
+                currentProduct = Object.keys(currentCustomer.products)[0];
+            }
+            
+            const customerInfo = document.getElementById('customerInfo');
+            
+            // 商品选择器
+            let productSelector = `
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="productSelector">选择商品</label>
+                    <select id="productSelector" onchange="switchProduct(this.value)">
+                        ${Object.keys(currentCustomer.products).length > 0 ? 
+                            Object.keys(currentCustomer.products).map(product => 
+                                `<option value="${product}" ${product === currentProduct ? 'selected' : ''}>${product}</option>`
+                            ).join('') : 
+                            '<option value="">请选择或添加商品</option>'
+                        }
+                        <option value="add_new">+ 添加新商品</option>
+                    </select>
+                </div>
+            `;
+            
+            // 获取当前商品数据
+            const productData = currentProduct && currentCustomer.products[currentProduct] ? 
+                currentCustomer.products[currentProduct] : 
+                { purchase: 0, trace: 0 };
+            const unit = '件'; // 统一使用件作为单位
+            const remaining = calculateRemaining(productData.purchase, productData.trace);
+            
+            let infoContent = `
+                ${productSelector}
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>客户姓名</label>
+                        <div class="value">${currentCustomer.name}</div>
+                    </div>
+                    <div class="info-item">
+                        <label>手机号</label>
+                        <div class="value">${currentCustomer.phone}</div>
+                    </div>
+                    <div class="info-item">
+                        <label>购买数量</label>
+                        <div class="value">${productData.purchase || 0} ${unit}</div>
+                    </div>
+                    <div class="info-item">
+                        <label>已用数量</label>
+                        <div class="value">${productData.trace || 0} ${unit}</div>
+                    </div>
+                    <div class="info-item">
+                        <label>剩余数量</label>
+                        <div class="value ${remaining > 0 ? 'positive' : remaining < 0 ? 'negative' : ''}">${remaining} ${unit}</div>
+                    </div>
+                    <div class="info-item">
+                        <label>归属店员</label>
+                        <div class="value">${currentCustomer.clerk || '无'}</div>
+                    </div>
+                </div>
+            `;
+            
+            customerInfo.innerHTML = infoContent;
+            
+            // 初始化编辑表单数据
+            document.getElementById('currentBuyQuantity').value = productData.purchase || 0;
+            document.getElementById('newBuyQuantity').value = 0; // 再次购买数量默认为0
+            document.getElementById('currentTraceQuantity').value = productData.trace || 0;
+            document.getElementById('newTraceQuantity').value = 0; // 本次取用数量默认为0
+            updateRemainingTotal();
+        }
+        
+        // 切换商品
+        function switchProduct(product) {
+            if (product === 'add_new') {
+                // 重置下拉框选中状态，避免重复触发
+                const selector = document.getElementById('productSelector');
+                if (selector) {
+                    selector.value = currentProduct || '';
+                }
+                
+                // 创建遮罩层
+                const overlay = document.createElement('div');
+                overlay.id = 'addProductOverlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                overlay.style.zIndex = '999';
+                document.body.appendChild(overlay);
+                
+                // 创建弹窗容器
+                const container = document.createElement('div');
+                container.id = 'addProductModal';
+                container.style.position = 'fixed';
+                container.style.top = '50%';
+                container.style.left = '50%';
+                container.style.transform = 'translate(-50%, -50%)';
+                container.style.backgroundColor = 'white';
+                container.style.padding = '30px';
+                container.style.borderRadius = '12px';
+                container.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+                container.style.zIndex = '1000';
+                container.style.minWidth = '300px';
+                
+                // 标题
+                const title = document.createElement('h3');
+                title.textContent = '添加新商品';
+                title.style.margin = '0 0 20px 0';
+                title.style.color = '#333';
+                title.style.fontSize = '18px';
+                container.appendChild(title);
+                
+                // 商品名称输入框
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'newProductInput';
+                input.placeholder = '请输入新商品名称';
+                input.style.width = '100%';
+                input.style.padding = '12px';
+                input.style.border = '2px solid #667eea';
+                input.style.borderRadius = '8px';
+                input.style.fontSize = '16px';
+                input.style.marginBottom = '15px';
+                input.style.boxSizing = 'border-box';
+                container.appendChild(input);
+                
+                // 每日食用个数输入框
+                const dailyCountInput = document.createElement('input');
+                dailyCountInput.type = 'number';
+                dailyCountInput.id = 'newProductDailyCount';
+                dailyCountInput.placeholder = '请输入每日食用个数';
+                dailyCountInput.min = '0';
+                dailyCountInput.step = '0.1';
+                dailyCountInput.value = '0';
+                dailyCountInput.style.width = '100%';
+                dailyCountInput.style.padding = '12px';
+                dailyCountInput.style.border = '2px solid #667eea';
+                dailyCountInput.style.borderRadius = '8px';
+                dailyCountInput.style.fontSize = '16px';
+                dailyCountInput.style.marginBottom = '20px';
+                dailyCountInput.style.boxSizing = 'border-box';
+                container.appendChild(dailyCountInput);
+                
+                // 按钮容器
+                const btnContainer = document.createElement('div');
+                btnContainer.style.display = 'flex';
+                btnContainer.style.gap = '10px';
+                btnContainer.style.justifyContent = 'flex-end';
+                
+                // 取消按钮
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = '取消';
+                cancelBtn.style.padding = '10px 20px';
+                cancelBtn.style.backgroundColor = '#f0f0f0';
+                cancelBtn.style.color = '#333';
+                cancelBtn.style.border = 'none';
+                cancelBtn.style.borderRadius = '8px';
+                cancelBtn.style.fontSize = '14px';
+                cancelBtn.style.cursor = 'pointer';
+                cancelBtn.onclick = closeAddProductModal;
+                btnContainer.appendChild(cancelBtn);
+                
+                // 确定按钮
+                const confirmBtn = document.createElement('button');
+                confirmBtn.textContent = '确定';
+                confirmBtn.style.padding = '10px 20px';
+                confirmBtn.style.backgroundColor = '#667eea';
+                confirmBtn.style.color = 'white';
+                confirmBtn.style.border = 'none';
+                confirmBtn.style.borderRadius = '8px';
+                confirmBtn.style.fontSize = '14px';
+                confirmBtn.style.cursor = 'pointer';
+                confirmBtn.onclick = function() {
+                    const newProduct = input.value.trim();
+                    const dailyCount = parseFloat(dailyCountInput.value) || 0;
+                    const unit = '件'; // 统一使用件作为单位
+                    
+                    if (newProduct) {
+                        // 确保currentCustomer存在且有products属性
+                        if (!currentCustomer) {
+                            alert('客户信息不存在');
+                            closeAddProductModal();
+                            return;
+                        }
+                        if (!currentCustomer.products) {
+                            currentCustomer.products = {};
+                        }
+                        if (!currentCustomer.products[newProduct]) {
+                            // 获取门店记忆的商品每件数量
+                            const perPackage = getProductPackageFromShop(newProduct) || 0;
+                            // 计算每日用量
+                            const dailyUsage = perPackage > 0 ? dailyCount / perPackage : 0;
+                            
+                            currentCustomer.products[newProduct] = {
+                                purchase: 0,
+                                trace: 0,
+                                unit: unit,
+                                daily_count: dailyCount,
+                                per_package: perPackage,
+                                daily_usage: dailyUsage,
+                                first_calculation_date: new Date().toISOString().split('T')[0]
+                            };
+                            localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+                        }
+                        currentProduct = newProduct;
+                        loadCustomerInfo();
+                    } else {
+                        alert('请输入商品名称');
+                    }
+                    closeAddProductModal();
+                };
+                btnContainer.appendChild(confirmBtn);
+                
+                container.appendChild(btnContainer);
+                document.body.appendChild(container);
+                
+                // 自动聚焦输入框
+                input.focus();
+                
+                // 处理回车事件
+                input.onkeypress = function(e) {
+                    if (e.key === 'Enter') {
+                        confirmBtn.click();
+                    }
+                };
+                
+                // 点击遮罩层关闭弹窗
+                overlay.onclick = closeAddProductModal;
+                
+                // 关闭弹窗函数
+                function closeAddProductModal() {
+                    const modal = document.getElementById('addProductModal');
+                    const ov = document.getElementById('addProductOverlay');
+                    if (modal) document.body.removeChild(modal);
+                    if (ov) document.body.removeChild(ov);
+                    // 重置下拉框状态
+                    const selector = document.getElementById('productSelector');
+                    if (selector) {
+                        selector.value = currentProduct || '';
+                    }
+                }
+            } else {
+                currentProduct = product;
+                loadCustomerInfo();
+            }
+        }
+        
+        // 更新总剩余盒数
+        function updateRemainingTotal() {
+            if (!currentCustomer) return;
+            const currentBuy = parseInt(document.getElementById('currentBuyQuantity').value) || 0;
+            const currentTrace = parseInt(document.getElementById('currentTraceQuantity').value) || 0;
+            const addBuy = parseInt(document.getElementById('newBuyQuantity').value) || 0;
+            const addTrace = parseInt(document.getElementById('newTraceQuantity').value) || 0;
+            const newBuy = currentBuy + addBuy;
+            const newTrace = currentTrace + addTrace;
+            const remaining = calculateRemaining(newBuy, newTrace);
+            document.getElementById('remainingTotal').value = remaining;
+        }
+        
+        // 监听数量变化
+        document.addEventListener('DOMContentLoaded', function() {
+            const newBuyQuantity = document.getElementById('newBuyQuantity');
+            const newTraceQuantity = document.getElementById('newTraceQuantity');
+            
+            if (newBuyQuantity) {
+                newBuyQuantity.addEventListener('input', updateRemainingTotal);
+            }
+            
+            if (newTraceQuantity) {
+                newTraceQuantity.addEventListener('input', updateRemainingTotal);
+            }
+        });
+        
+        // 提交合并编辑
+        function submitCombinedEdit() {
+            const currentBuy = parseInt(document.getElementById('currentBuyQuantity').value) || 0;
+            const currentTrace = parseInt(document.getElementById('currentTraceQuantity').value) || 0;
+            const addBuy = parseInt(document.getElementById('newBuyQuantity').value) || 0;
+            const addTrace = parseInt(document.getElementById('newTraceQuantity').value) || 0;
+            
+            if (isNaN(addBuy) || addBuy < 0) {
+                alert('请输入有效的再次购买数量');
+                return;
+            }
+            
+            if (isNaN(addTrace) || addTrace < 0) {
+                alert('请输入有效的本次取用数量');
+                return;
+            }
+            
+            const newBuyQuantity = currentBuy + addBuy;
+            const newTraceQuantity = currentTrace + addTrace;
+            
+            const buyChanged = addBuy !== 0;
+            const traceChanged = addTrace !== 0;
+            
+            if (!buyChanged && !traceChanged) {
+                alert('数据未发生变化');
+                return;
+            }
+            
+            operationData = {
+                type: '编辑客户数据',
+                product: currentProduct,
+                oldBuy: currentBuy,
+                newBuy: newBuyQuantity,
+                oldTrace: currentTrace,
+                newTrace: newTraceQuantity,
+                customer: currentCustomer
+            };
+            
+            generateCombinedReceipt();
+            nextStep('step5');
+        }
+        
+        // 生成合并收据
+        function generateCombinedReceipt() {
+            const receipt = document.getElementById('receipt');
+            const timestamp = new Date();
+            const addBuy = operationData.newBuy - operationData.oldBuy;
+            const addTrace = operationData.newTrace - operationData.oldTrace;
+            const newRemaining = calculateRemaining(operationData.newBuy, operationData.newTrace);
+            const oldRemaining = calculateRemaining(operationData.oldBuy, operationData.oldTrace);
+            
+            let receiptContent = `
+                <h3>操作确认</h3>
+                <div class="receipt-item"><strong>店员:</strong> ${currentClerk}</div>
+                <div class="receipt-item"><strong>店铺:</strong> ${currentShop}</div>
+                <div class="receipt-item"><strong>客户:</strong> ${operationData.customer.name} (${operationData.customer.phone})</div>
+                <div class="receipt-item"><strong>商品:</strong> ${operationData.product}</div>
+                <div class="receipt-item"><strong>操作类型:</strong> ${operationData.type}</div>
+                <div class="receipt-item"><strong>当前购买:</strong> ${operationData.oldBuy} 盒</div>
+                <div class="receipt-item"><strong>再次购买:</strong> +${addBuy} 盒</div>
+                <div class="receipt-item"><strong>新购买总量:</strong> ${operationData.newBuy} 盒</div>
+                <div class="receipt-item"><strong>当前已用:</strong> ${operationData.oldTrace} 盒</div>
+                <div class="receipt-item"><strong>本次取用:</strong> +${addTrace} 盒</div>
+                <div class="receipt-item"><strong>新已用总量:</strong> ${operationData.newTrace} 盒</div>
+                <div class="receipt-item"><strong>修改前剩余:</strong> ${oldRemaining} 盒</div>
+                <div class="receipt-item"><strong>修改后剩余:</strong> ${newRemaining} 盒</div>
+                <div class="receipt-item"><strong>操作时间:</strong> ${formatDateTime(timestamp)}</div>
+            `;
+            
+            receipt.innerHTML = receiptContent;
+        }
+        
+        // 完成操作
+        function completeOperation() {
+            const timestamp = new Date();
+            
+            // 更新客户数据
+            const customerIndex = customers.findIndex(c => c.id === currentCustomer.id);
+            if (customerIndex !== -1) {
+                // 确保客户数据结构包含products字段
+                if (!customers[customerIndex].products) {
+                    customers[customerIndex].products = {};
+                }
+                
+                if (operationData.type === '编辑客户数据') {
+                    // 确保商品存在
+                    if (!customers[customerIndex].products[operationData.product]) {
+                        customers[customerIndex].products[operationData.product] = { purchase: 0, trace: 0, withdrawalHistory: [] };
+                    }
+                    // 确保有取货历史记录
+                    if (!customers[customerIndex].products[operationData.product].withdrawalHistory) {
+                        customers[customerIndex].products[operationData.product].withdrawalHistory = [];
+                    }
+                    // 检查是否有取货量变化
+                    const oldTrace = customers[customerIndex].products[operationData.product].trace || 0;
+                    const traceChange = operationData.newTrace - oldTrace;
+                    
+                    // 计算已拿走还未吃完的数量
+                    const prediction = calculateProductPrediction(customers[customerIndex], operationData.product);
+                    const remaining_unconsumed = prediction ? prediction.remaining_unconsumed : 0;
+                    
+                    if (traceChange > 0) {
+                        // 记录取货历史
+                        customers[customerIndex].products[operationData.product].withdrawalHistory.push({
+                            amount: traceChange,
+                            date: new Date().toISOString()
+                        });
+                    }
+                    // 更新商品数据
+                    customers[customerIndex].products[operationData.product].purchase = operationData.newBuy;
+                    customers[customerIndex].products[operationData.product].trace = operationData.newTrace;
+                    // 更新本次取用数量 = 本次取货数量 + 已拿走还未吃完的数量
+                    customers[customerIndex].products[operationData.product].current_withdrawal = traceChange + remaining_unconsumed;
+                    
+                    // 确保商品数据包含必要的字段
+                    if (!customers[customerIndex].products[operationData.product].per_package) {
+                        // 获取门店记忆的商品每件数量
+                        const perPackage = getProductPackageFromShop(operationData.product) || 0;
+                        customers[customerIndex].products[operationData.product].per_package = perPackage;
+                    }
+                    
+                    if (!customers[customerIndex].products[operationData.product].daily_count) {
+                        customers[customerIndex].products[operationData.product].daily_count = 0;
+                    }
+                    
+                    if (!customers[customerIndex].products[operationData.product].daily_usage) {
+                        const perPackage = customers[customerIndex].products[operationData.product].per_package || 0;
+                        const dailyCount = customers[customerIndex].products[operationData.product].daily_count || 0;
+                        const dailyUsage = perPackage > 0 ? dailyCount / perPackage : 0;
+                        customers[customerIndex].products[operationData.product].daily_usage = dailyUsage;
+                    }
+                    
+                    if (!customers[customerIndex].products[operationData.product].first_calculation_date) {
+                        customers[customerIndex].products[operationData.product].first_calculation_date = new Date().toISOString().split('T')[0];
+                    }
+                } else if (operationData.type === '编辑购买盒数') {
+                    // 兼容旧数据结构
+                    if (!customers[customerIndex].products) {
+                        customers[customerIndex].products = {};
+                    }
+                    // 使用当前选择的产品
+                    if (currentProduct && customers[customerIndex].products[currentProduct]) {
+                        // 确保有取货历史记录
+                        if (!customers[customerIndex].products[currentProduct].withdrawalHistory) {
+                            customers[customerIndex].products[currentProduct].withdrawalHistory = [];
+                        }
+                        customers[customerIndex].products[currentProduct].purchase = operationData.newValue;
+                    }
+                } else if (operationData.type === '编辑用量盒数') {
+                    // 兼容旧数据结构
+                    if (!customers[customerIndex].products) {
+                        customers[customerIndex].products = {};
+                    }
+                    // 使用当前选择的产品
+                    if (currentProduct && customers[customerIndex].products[currentProduct]) {
+                        // 确保有取货历史记录
+                        if (!customers[customerIndex].products[currentProduct].withdrawalHistory) {
+                            customers[customerIndex].products[currentProduct].withdrawalHistory = [];
+                        }
+                        // 检查是否有取货量变化
+                        const oldTrace = customers[customerIndex].products[currentProduct].trace || 0;
+                        const traceChange = operationData.newValue - oldTrace;
+                        
+                        // 计算已拿走还未吃完的数量
+                        const prediction = calculateProductPrediction(customers[customerIndex], currentProduct);
+                        const remaining_unconsumed = prediction ? prediction.remaining_unconsumed : 0;
+                        
+                        if (traceChange > 0) {
+                            // 记录取货历史
+                            customers[customerIndex].products[currentProduct].withdrawalHistory.push({
+                                amount: traceChange,
+                                date: new Date().toISOString()
+                            });
+                        }
+                        customers[customerIndex].products[currentProduct].trace = operationData.newValue;
+                        // 更新本次取用数量 = 本次取货数量 + 已拿走还未吃完的数量
+                        customers[customerIndex].products[currentProduct].current_withdrawal = traceChange + remaining_unconsumed;
+                    }
+                }
+                
+                // 归属店员（如果还没有归属）
+                if (!customers[customerIndex].clerk) {
+                    customers[customerIndex].clerk = currentClerk;
+                    if (!clerks[currentClerk].customers.includes(customers[customerIndex].id)) {
+                        clerks[currentClerk].customers.push(customers[customerIndex].id);
+                    }
+                }
+                
+                localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+                localStorage.setItem('fullSystemClerks', JSON.stringify(clerks));
+                
+                // 更新当前客户对象
+                currentCustomer = customers[customerIndex];
+                
+                // 检查预计还能吃天数，当≤3时自动弹窗提醒店员
+                if (operationData.product) {
+                    const productData = customers[customerIndex].products[operationData.product];
+                    if (productData) {
+                        const prediction = calculateProductPrediction(customers[customerIndex], operationData.product);
+                        if (prediction && prediction.remaining_days <= 3) {
+                            setTimeout(() => {
+                                alert(`提醒：顾客${customers[customerIndex].name}的${operationData.product}预计还能吃${prediction.remaining_days}天，请及时联系！`);
+                            }, 500);
+                        }
+                    }
+                }
+            }
+            
+            // 生成操作日志
+            let logDetails = '';
+            let logOldValue = '';
+            let logNewValue = '';
+            
+            if (operationData.type === '编辑客户数据') {
+                logDetails = `${operationData.product}: 购买: ${operationData.oldBuy}→${operationData.newBuy}, 已用: ${operationData.oldTrace}→${operationData.newTrace}`;
+                logOldValue = `购${operationData.oldBuy}用${operationData.oldTrace}`;
+                logNewValue = `购${operationData.newBuy}用${operationData.newTrace}`;
+            } else {
+                logDetails = `${operationData.type}: ${operationData.oldValue} → ${operationData.newValue}`;
+                logOldValue = operationData.oldValue;
+                logNewValue = operationData.newValue;
+            }
+            
+            const log = {
+                id: Date.now(),
+                clerk: currentClerk,
+                shop: currentShop,
+                customer: currentCustomer,
+                product: operationData.product || '',
+                operation: operationData.type,
+                oldValue: logOldValue,
+                newValue: logNewValue,
+                details: logDetails,
+                timestamp: timestamp.toISOString(),
+                date: formatDate(timestamp)
+            };
+            
+            logs.push(log);
+            localStorage.setItem('fullSystemLogs', JSON.stringify(logs));
+            
+            alert('操作成功完成！');
+            loadCustomerList();
+            nextStep('step3');
+        }
+        
+        // 切换标签页
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (tab === 'logs') {
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+                document.getElementById('logsTab').classList.add('active');
+                loadQueryCustomers();
+                queryHistory();
+            } else if (tab === 'reconciliation') {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.getElementById('reconciliationTab').classList.add('active');
+                loadReconciliation();
+            }
+        }
+        
+        // 加载查询客户和商品选项（现在使用搜索框，此函数保留但不做操作）
+        function loadQueryCustomers() {
+            // 搜索框不需要预加载选项
+        }
+        
+        // 查询历史记录
+        function queryHistory() {
+            const searchKeyword = document.getElementById('queryCustomer').value.trim();
+            const productKeyword = document.getElementById('queryProduct').value.trim();
+            const queryDate = document.getElementById('queryDate').value;
+            
+            // 先过滤出当前店铺的日志
+            let filteredLogs = logs.filter(log => log.shop === currentShop);
+            
+            // 按日期过滤
+            if (queryDate) {
+                filteredLogs = filteredLogs.filter(log => log.date === queryDate);
+            }
+            
+            // 按商品模糊搜索
+            if (productKeyword) {
+                filteredLogs = filteredLogs.filter(log => {
+                    const productName = log.product || '';
+                    return productName.toLowerCase().includes(productKeyword.toLowerCase());
+                });
+            }
+            
+            // 按客户搜索
+            if (searchKeyword) {
+                // 先获取当前店铺的所有客户
+                const shopCustomers = customers.filter(customer => {
+                    const customerClerk = customer.clerk;
+                    return customerClerk && clerks[customerClerk] && clerks[customerClerk].shop === currentShop;
+                });
+                
+                // 搜索匹配的客户
+                const matchedCustomers = shopCustomers.filter(customer => {
+                    // 按姓名搜索
+                    const nameMatch = customer.name.includes(searchKeyword);
+                    // 按手机尾号搜索（后4位）
+                    const phoneMatch = customer.phone && customer.phone.slice(-4).includes(searchKeyword);
+                    return nameMatch || phoneMatch;
+                });
+                
+                // 获取匹配客户的ID列表
+                const matchedCustomerIds = matchedCustomers.map(customer => customer.id);
+                
+                // 过滤出匹配客户的日志
+                filteredLogs = filteredLogs.filter(log => matchedCustomerIds.includes(log.customer.id));
+            }
+            
+            const historyResult = document.getElementById('historyResult');
+            
+            if (filteredLogs.length === 0) {
+                historyResult.innerHTML = '<div class="success-message">暂无记录</div>';
+                return;
+            }
+            
+            let tableHTML = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>客户</th>
+                            <th>商品</th>
+                            <th>操作类型</th>
+                            <th>修改前</th>
+                            <th>修改后</th>
+                            <th>操作人</th>
+                            <th>时间</th>
+                            <th>店铺</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            filteredLogs.reverse().forEach(log => {
+                // 提取手机尾号（后4位）
+                const phoneTail = log.customer.phone ? log.customer.phone.slice(-4) : '';
+                tableHTML += `
+                    <tr>
+                        <td>${log.customer.name} (尾号${phoneTail})</td>
+                        <td>${log.product || ''}</td>
+                        <td>${log.operation}</td>
+                        <td>${log.oldValue !== undefined ? log.oldValue : '-'}</td>
+                        <td>${log.newValue !== undefined ? log.newValue : '-'}</td>
+                        <td>${log.clerk}</td>
+                        <td>${formatDateTime(new Date(log.timestamp))}</td>
+                        <td>${log.shop}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            historyResult.innerHTML = tableHTML;
+        }
+        
+        // 时间处理函数
+        function getDateRange(period) {
+            const now = new Date();
+            let end = new Date(now);
+            end.setHours(23, 59, 59, 999);
+            
+            let start = new Date();
+            
+            switch(period) {
+                case 'today':
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case 'yesterday':
+                    start.setDate(now.getDate() - 1);
+                    start.setHours(0, 0, 0, 0);
+                    end.setDate(now.getDate() - 1);
+                    break;
+                case '7days':
+                    start.setDate(now.getDate() - 6);
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case '30days':
+                    start.setDate(now.getDate() - 29);
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case '90days':
+                    start.setDate(now.getDate() - 89);
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case 'thisMonth':
+                    start.setDate(1);
+                    start.setHours(0, 0, 0, 0);
+                    break;
+                case 'lastMonth':
+                    start.setMonth(now.getMonth() - 1);
+                    start.setDate(1);
+                    start.setHours(0, 0, 0, 0);
+                    end.setDate(0);
+                    end.setHours(23, 59, 59, 999);
+                    break;
+                case 'custom':
+                    const startDate = document.getElementById('startDate').value;
+                    const endDate = document.getElementById('endDate').value;
+                    if (startDate && endDate) {
+                        // 确保日期格式包含时间，使用ISO格式
+                        start = new Date(startDate + 'T00:00:00');
+                        end = new Date(endDate + 'T23:59:59');
+                    }
+                    break;
+            }
+            
+            return { start, end };
+        }
+        
+        // 检查时间跨度是否超过180天
+        function checkDateRange(start, end) {
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= 180;
+        }
+        
+        // 重置对账筛选
+        function resetReconciliationFilter() {
+            document.getElementById('timePeriod').value = '30days';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            loadReconciliation();
+        }
+        
+        // 分页功能
+        let currentReconciliationPage = 1;
+        function changePage(page) {
+            currentReconciliationPage = page;
+            loadReconciliation();
+        }
+        
+        // 处理查询
+        function handleQuery() {
+            const period = document.getElementById('timePeriod').value;
+            
+            // 如果选择自定义日期，需要验证日期是否填写
+            if (period === 'custom') {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                if (!startDate || !endDate) {
+                    alert('请选择开始日期和结束日期');
+                    return;
+                }
+                
+                // 检查开始日期是否晚于结束日期
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                if (start > end) {
+                    alert('开始日期不能晚于结束日期');
+                    return;
+                }
+            }
+            
+            // 获取时间范围
+            const { start, end } = getDateRange(period);
+            
+            // 检查时间跨度
+            if (!checkDateRange(start, end)) {
+                alert('时间跨度不能超过180天');
+                return;
+            }
+            
+            // 打印参数到控制台
+            console.log('查询参数:', {
+                period,
+                start: start.toISOString(),
+                end: end.toISOString()
+            });
+            
+            // 打印当前客户数据
+            console.log('当前客户数据:', customers);
+            console.log('客户数量:', customers.length);
+            
+            // 重置页码并加载数据
+            currentReconciliationPage = 1;
+            loadReconciliation();
+        }
+        
+        // 加载对账数据
+        function loadReconciliation() {
+            const reconciliationResult = document.getElementById('reconciliationResult');
+            
+            // 获取时间范围
+            const period = document.getElementById('timePeriod').value;
+            const { start, end } = getDateRange(period);
+            
+            // 获取店员搜索框的值
+            let clerkSearch = '';
+            const clerkSearchElement = document.getElementById('clerkSearch');
+            if (clerkSearchElement) {
+                clerkSearch = clerkSearchElement.value.trim();
+            }
+            
+            let filteredCustomers = customers;
+            if (currentMode === 'personal' && clerks[currentClerk]) {
+                // 个人专属模式：只显示当前店员名下的客户
+                filteredCustomers = customers.filter(customer => 
+                    clerks[currentClerk].customers.includes(customer.id)
+                );
+            } else {
+                // 全局共享模式：只显示同一店铺的客户
+                filteredCustomers = customers.filter(customer => {
+                    const customerClerk = customer.clerk;
+                    return customerClerk && clerks[customerClerk] && clerks[customerClerk].shop === currentShop;
+                });
+            }
+            
+            if (filteredCustomers.length === 0) {
+                let tableHTML = `
+                    <div style="background: white; border-radius: var(--border-radius); padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                        <p style="color: #666; font-size: 16px;">暂无客户数据</p>
+                    </div>
+                `;
+                reconciliationResult.innerHTML = tableHTML;
+                return;
+            }
+            
+            // 筛选时间范围内的客户
+            console.log('开始筛选时间范围:', {
+                start: start.toISOString(),
+                end: end.toISOString(),
+                startTimestamp: start.getTime(),
+                endTimestamp: end.getTime()
+            });
+            
+            let timeFilteredCustomers = filteredCustomers.filter(customer => {
+                if (!customer.createdAt) {
+                    console.log('客户无创建时间:', customer.name);
+                    return false;
+                }
+                
+                const customerDate = new Date(customer.createdAt);
+                const customerTimestamp = customerDate.getTime();
+                
+                console.log('客户时间信息:', {
+                    name: customer.name,
+                    createdAt: customer.createdAt,
+                    customerDate: customerDate.toISOString(),
+                    customerTimestamp: customerTimestamp
+                });
+                
+                // 只包含有创建时间的客户，并且在时间范围内
+                const isInRange = customerTimestamp >= start.getTime() && customerTimestamp <= end.getTime();
+                console.log('是否在范围内:', isInRange);
+                return isInRange;
+            });
+            
+            // 按店员筛选
+            let originalTimeFilteredCustomers = timeFilteredCustomers;
+            if (clerkSearch) {
+                timeFilteredCustomers = timeFilteredCustomers.filter(customer => {
+                    return customer.clerk && customer.clerk.includes(clerkSearch);
+                });
+            }
+            
+            console.log('时间筛选后客户数量:', originalTimeFilteredCustomers.length);
+            console.log('店员筛选后客户数量:', timeFilteredCustomers.length);
+            
+            if (timeFilteredCustomers.length === 0) {
+                if (clerkSearch) {
+                    // 未搜索到店员
+                    let tableHTML = `
+                        <div style="background: white; border-radius: var(--border-radius); padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                            <p style="color: #666; font-size: 16px;">未找到该店员名下的顾客数据</p>
+                        </div>
+                    `;
+                    reconciliationResult.innerHTML = tableHTML;
+                } else {
+                    // 时间范围内无数据
+                    let tableHTML = `
+                        <div style="background: white; border-radius: var(--border-radius); padding: 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                            <p style="color: #666; font-size: 16px;">该时间范围内暂无客户数据</p>
+                        </div>
+                    `;
+                    reconciliationResult.innerHTML = tableHTML;
+                }
+                return;
+            }
+            
+            // 按商品统计
+            const productStats = {};
+            let totalPurchase = 0;
+            let totalTrace = 0;
+            let totalRemaining = 0;
+            
+            timeFilteredCustomers.forEach(customer => {
+                if (customer.products) {
+                    // 新数据结构
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                        if (!productStats[product]) {
+                            productStats[product] = { purchase: 0, trace: 0, remaining: 0 };
+                        }
+                        const purchase = data.purchase || 0;
+                        const trace = data.trace || 0;
+                        const remaining = calculateRemaining(purchase, trace);
+                        
+                        productStats[product].purchase += purchase;
+                        productStats[product].trace += trace;
+                        productStats[product].remaining += remaining;
+                        
+                        totalPurchase += purchase;
+                        totalTrace += trace;
+                        totalRemaining += remaining;
+                    });
+                } else {
+                // 兼容旧数据结构
+                const product = '';
+                if (!productStats[product]) {
+                    productStats[product] = { purchase: 0, trace: 0, remaining: 0 };
+                }
+                const purchase = customer.purchase || 0;
+                const trace = customer.trace || 0;
+                const remaining = calculateRemaining(purchase, trace);
+                
+                productStats[product].purchase += purchase;
+                productStats[product].trace += trace;
+                productStats[product].remaining += remaining;
+                
+                totalPurchase += purchase;
+                totalTrace += trace;
+                totalRemaining += remaining;
+            }
+            });
+            
+            let tableHTML = `
+                <div class="info-grid" style="margin-bottom: 30px;">
+                    <div class="info-item">
+                        <label>客户总数</label>
+                        <div class="value">${timeFilteredCustomers.length} 位</div>
+                    </div>
+                    <div class="info-item">
+                        <label>总购买数量</label>
+                        <div class="value positive">${totalPurchase} 件</div>
+                    </div>
+                    <div class="info-item">
+                        <label>总已用数量</label>
+                        <div class="value">${totalTrace} 件</div>
+                    </div>
+                    <div class="info-item">
+                        <label>总剩余数量</label>
+                        <div class="value ${totalRemaining > 0 ? 'positive' : 'negative'}">${totalRemaining} 件</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0;">商品汇总</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="clerkSearch" value="${clerkSearch || ''}" placeholder="输入店员姓名搜索" style="padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; width: 200px;">
+                        <button class="btn-primary" onclick="loadReconciliation()" style="padding: 8px 12px; font-size: 14px;">搜索</button>
+                    </div>
+                </div>
+                <table class="history-table" style="margin-bottom: 30px;">
+                    <thead>
+                        <tr>
+                            <th>商品</th>
+                            <th>购买</th>
+                            <th>已用</th>
+                            <th>剩余</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // 商品汇总
+            Object.entries(productStats).forEach(([product, stats]) => {
+                tableHTML += `
+                    <tr>
+                        <td>${product}</td>
+                        <td>${stats.purchase}</td>
+                        <td>${stats.trace}</td>
+                        <td class="${stats.remaining > 0 ? 'positive' : 'negative'}">${stats.remaining}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+                
+                <h3 style="margin-bottom: 20px;">客户明细</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>交易时间</th>
+                            <th>客户</th>
+                            <th>商品</th>
+                            <th>购买</th>
+                            <th>已用</th>
+                            <th>剩余</th>
+                            <th>归属店员</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // 按交易时间倒序排列
+            const sortedCustomers = timeFilteredCustomers.sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+            });
+            
+            // 分页功能
+            const pageSize = 20;
+            const totalPages = Math.ceil(sortedCustomers.length / pageSize);
+            const startIndex = (currentReconciliationPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const paginatedCustomers = sortedCustomers.slice(startIndex, endIndex);
+            
+            // 客户明细
+            paginatedCustomers.forEach(customer => {
+                if (customer.products) {
+                    // 新数据结构
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                            const remaining = calculateRemaining(data.purchase, data.trace);
+                            const transactionTime = customer.createdAt ? new Date(customer.createdAt).toLocaleString('zh-CN', { 
+                                year: 'numeric', 
+                                month: '2-digit', 
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }) : '';
+                            tableHTML += `
+                                <tr>
+                                    <td>${transactionTime}</td>
+                                    <td>${customer.name} (${customer.phone})</td>
+                                    <td>${product}</td>
+                                    <td>${data.purchase || 0}</td>
+                                    <td>${data.trace || 0}</td>
+                                    <td class="${remaining > 0 ? 'positive' : 'negative'}">${remaining}</td>
+                                    <td>${customer.clerk || '无'}</td>
+                                </tr>
+                            `;
+                        });
+                } else {
+                    // 兼容旧数据结构
+                    const remaining = calculateRemaining(customer.purchase, customer.trace);
+                    const transactionTime = customer.createdAt ? new Date(customer.createdAt).toLocaleString('zh-CN', { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : '';
+                    tableHTML += `
+                        <tr>
+                            <td>${transactionTime}</td>
+                            <td>${customer.name} (${customer.phone})</td>
+                            <td></td>
+                            <td>${customer.purchase || 0}</td>
+                            <td>${customer.trace || 0}</td>
+                            <td class="${remaining > 0 ? 'positive' : 'negative'}">${remaining}</td>
+                            <td>${customer.clerk || '无'}</td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+                
+                <!-- 分页控件 -->
+                <div class="pagination" style="margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                    <span style="color: #666;">共 ${sortedCustomers.length} 条记录 | 第 ${currentReconciliationPage} / ${totalPages} 页</span>
+                    ${currentReconciliationPage > 1 ? `<button class="btn-secondary" onclick="changePage(${currentReconciliationPage - 1})" style="padding: 5px 10px;">上一页</button>` : ''}
+                    ${currentReconciliationPage < totalPages ? `<button class="btn-secondary" onclick="changePage(${currentReconciliationPage + 1})" style="padding: 5px 10px;">下一页</button>` : ''}
+                </div>
+            `;
+            
+            reconciliationResult.innerHTML = tableHTML;
+        }
+        
+        // 商品消耗预测核心函数
+        function calculateProductPrediction(customer, product) {
+            // 获取商品数据
+            const productData = customer.products[product];
+            if (!productData) return null;
+            
+            const purchase = productData.purchase || 0; // 购买数量
+            const trace = productData.trace || 0; // 已用数量（顾客拿走的总数量）
+            const current_withdrawal = productData.current_withdrawal || 0; // 本次取用数量
+            const daily_usage = productData.daily_usage || 0; // 计算得到的每日用量
+            const remaining = Math.max(0, purchase - trace); // 剩余数量
+            
+            // 计算预计还能吃多少天 = 本次取用数量 ÷ 每日用量，结果保留整数
+            let remaining_days = 0;
+            if (daily_usage > 0) {
+                remaining_days = Math.floor(current_withdrawal / daily_usage);
+            }
+            
+            // 计算已拿走还未吃完的数量 = 本次取用数量 - (当前日期 - 首次计算日期) * 每日用量
+            let remaining_unconsumed = current_withdrawal;
+            if (daily_usage > 0 && productData.first_calculation_date) {
+                const firstDate = new Date(productData.first_calculation_date);
+                const today = new Date();
+                const daysPassed = Math.floor((today - firstDate) / (1000 * 60 * 60 * 24));
+                const consumed = daysPassed * daily_usage;
+                remaining_unconsumed = Math.max(0, current_withdrawal - consumed);
+            }
+            
+            // 生成提醒建议
+            let remind_text = '请填写一件包含多少个和一天吃多少个以计算预计天数';
+            if (daily_usage > 0) {
+                if (remaining_days <= 3) {
+                    remind_text = '即将耗尽，建议主动联系顾客';
+                } else if (remaining_days <= 7) {
+                    remind_text = '可考虑联系顾客再次购买';
+                } else {
+                    remind_text = '库存充足，暂无需联系';
+                }
+            }
+            
+            return {
+                daily_usage,
+                used: current_withdrawal, // 使用本次取用数量
+                remaining: remaining,
+                remaining_days,
+                remaining_unconsumed, // 已拿走还未吃完的数量
+                remind_text
+            };
+        }
+        
+        // 生成补货预警列表
+        function generateRemindList() {
+            const remindList = [];
+            
+            // 获取已处理的预警
+            const processedReminders = JSON.parse(localStorage.getItem('processedReminders')) || [];
+            
+            // 筛选当前店员负责的客户
+            let filteredCustomers = customers.filter(customer => 
+                customer.clerk === currentClerk
+            );
+            
+            // 检查每个客户的每个商品
+            filteredCustomers.forEach(customer => {
+                if (customer.products) {
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                        const prediction = calculateProductPrediction(customer, product);
+                        if (prediction && prediction.daily_usage > 0 && prediction.remaining_days <= 3) {
+                            // 检查是否已经处理过
+                            const isProcessed = processedReminders.some(item => 
+                                item.user_name === customer.name && item.product_name === product
+                            );
+                            if (!isProcessed) {
+                                // 计算该顾客的总剩余数量
+                                let totalRemaining = 0;
+                                Object.entries(customer.products).forEach(([p, d]) => {
+                                    const pPurchase = d.purchase || 0;
+                                    const pTrace = d.trace || 0;
+                                    totalRemaining += Math.max(0, pPurchase - pTrace);
+                                });
+                                
+                                // 生成提醒文案
+                                let remind_text = '';
+                                if (totalRemaining > 0) {
+                                    remind_text = `顾客${customer.name}${product}即将用完，剩余可用天数${prediction.remaining_days}天，同时该顾客在本店尚有${totalRemaining}件货未取，请及时联系。`;
+                                } else {
+                                    remind_text = `顾客${customer.name}${product}即将用完，剩余可用天数${prediction.remaining_days}天，请及时联系。`;
+                                }
+                                
+                                remindList.push({
+                                    user_name: customer.name,
+                                    product_name: product,
+                                    remaining_days: prediction.remaining_days,
+                                    remind_text: remind_text
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            
+            return remindList;
+        }
+        
+        // 标记预警为已处理
+        function markAsProcessed(userName, productName) {
+            // 获取已处理的预警
+            const processedReminders = JSON.parse(localStorage.getItem('processedReminders')) || [];
+            
+            // 检查是否已经处理过
+            const isAlreadyProcessed = processedReminders.some(item => 
+                item.user_name === userName && item.product_name === productName
+            );
+            
+            if (!isAlreadyProcessed) {
+                // 添加到已处理列表
+                processedReminders.push({
+                    user_name: userName,
+                    product_name: productName,
+                    processed_at: new Date().toISOString()
+                });
+                
+                // 保存到localStorage
+                localStorage.setItem('processedReminders', JSON.stringify(processedReminders));
+                
+                // 刷新页面
+                loadReconciliation();
+                loadProductPrediction();
+                loadCustomerList(); // 刷新顾客列表，移除已处理的预警标记
+                checkCustomerReminders(); // 检查提醒状态，更新顶部提醒条
+            }
+        }
+        
+        // 保存每日用量
+        function saveDailyUsage(customerName, productName, perPackageValue, dailyCountValue) {
+            const perPackage = parseFloat(perPackageValue);
+            const dailyCount = parseFloat(dailyCountValue);
+            
+            if (isNaN(perPackage) || perPackage <= 0) {
+                alert('请输入有效的一件包含多少个');
+                return;
+            }
+            
+            if (isNaN(dailyCount) || dailyCount < 0) {
+                alert('请输入有效的一天吃多少个');
+                return;
+            }
+            
+            // 计算每日用量（件）= 每日食用个数 ÷ 每件包含个数
+            const dailyUsage = dailyCount / perPackage;
+            
+            // 找到对应的顾客
+            const customer = customers.find(c => c.name === customerName);
+            if (!customer || !customer.products || !customer.products[productName]) {
+                alert('未找到对应的顾客或商品');
+                return;
+            }
+            
+            // 更新每日用量和相关数据
+            customer.products[productName].per_package = perPackage;
+            customer.products[productName].daily_count = dailyCount;
+            customer.products[productName].daily_usage = dailyUsage;
+            
+            // 重置首次计算日期，重新开始计算
+            customer.products[productName].first_calculation_date = new Date().toISOString().split('T')[0];
+            
+            // 保存商品每件数量到门店记忆
+            saveProductPackageToShop(perPackage, productName);
+            
+            // 保存到localStorage
+            localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+            
+            // 重新搜索以更新显示
+            searchCustomerPredictions();
+            loadProductPrediction();
+            loadCustomerList(); // 刷新顾客列表，更新提醒状态
+            checkCustomerReminders(); // 检查提醒状态，更新顶部提醒条
+            
+            alert('保存成功！');
+        }
+        
+        // 保存商品每件数量到门店记忆
+        function saveProductPackageToShop(perPackage, productName) {
+            // 获取当前店员所属门店
+            const currentClerkInfo = clerks[currentClerk];
+            if (!currentClerkInfo || !currentClerkInfo.shop) return;
+            
+            const shopName = currentClerkInfo.shop;
+            
+            // 获取门店商品每件数量记忆
+            const shopProductPackages = JSON.parse(localStorage.getItem('shopProductPackages')) || {};
+            
+            // 初始化门店记忆
+            if (!shopProductPackages[shopName]) {
+                shopProductPackages[shopName] = {};
+            }
+            
+            // 保存商品每件数量
+            shopProductPackages[shopName][productName] = perPackage;
+            
+            // 保存到localStorage
+            localStorage.setItem('shopProductPackages', JSON.stringify(shopProductPackages));
+        }
+        
+        // 获取门店商品每件数量记忆
+        function getProductPackageFromShop(productName) {
+            // 获取当前店员所属门店
+            const currentClerkInfo = clerks[currentClerk];
+            if (!currentClerkInfo || !currentClerkInfo.shop) return 0;
+            
+            const shopName = currentClerkInfo.shop;
+            
+            // 获取门店商品每件数量记忆
+            const shopProductPackages = JSON.parse(localStorage.getItem('shopProductPackages')) || {};
+            
+            // 返回商品每件数量，如果不存在则返回0
+            return shopProductPackages[shopName] && shopProductPackages[shopName][productName] ? shopProductPackages[shopName][productName] : 0;
+        }
+        
+        // 加载商品消耗预测页面
+        function loadProductPrediction() {
+            const remindListContainer = document.getElementById('remindListContainer');
+            const remindList = generateRemindList();
+            
+            // 筛选当前店员的预警
+            let filteredRemindList = remindList;
+            if (currentMode === 'personal' && clerks[currentClerk]) {
+                // 个人专属模式：只显示当前店员名下的客户预警
+                filteredRemindList = remindList.filter(item => {
+                    const customer = customers.find(c => c.name === item.user_name);
+                    return customer && customer.clerk === currentClerk;
+                });
+            } else if (currentMode === 'global') {
+                // 全局共享模式：只显示同一店铺的客户预警
+                filteredRemindList = remindList.filter(item => {
+                    const customer = customers.find(c => c.name === item.user_name);
+                    return customer && customer.clerk && clerks[customer.clerk] && clerks[customer.clerk].shop === currentShop;
+                });
+            }
+            
+            if (filteredRemindList.length > 0) {
+                let remindHTML = `
+                    <div style="background: white; border-radius: var(--border-radius); padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                `;
+                
+                filteredRemindList.forEach(item => {
+                    remindHTML += `
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <span>${item.remind_text}</span>
+                            <div>
+                                <button class="btn-primary" style="padding: 5px 10px; font-size: 12px;" onclick="markAsProcessed('${item.user_name}', '${item.product_name}')">标记已处理</button>
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                remindHTML += `
+                        </ul>
+                    </div>
+                `;
+                
+                remindListContainer.innerHTML = remindHTML;
+            } else {
+                remindListContainer.innerHTML = `
+                    <div class="success-message" style="text-align: center; padding: 20px; background: white; border-radius: var(--border-radius); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        暂无补货预警
+                    </div>
+                `;
+            }
+            
+            // 检查并显示提醒
+            checkCustomerReminders();
+        }
+        
+        // 搜索顾客商品预测
+        function searchCustomerPredictions() {
+            const searchTerm = document.getElementById('customerSearch').value.trim();
+            const resultsDiv = document.getElementById('predictionResults');
+            
+            if (!searchTerm) {
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        请输入顾客姓名或手机尾号进行搜索
+                    </div>
+                `;
+                return;
+            }
+            
+            // 查找匹配的顾客（支持姓名和手机尾号搜索）
+            let matchedCustomers = customers.filter(customer => {
+                // 按姓名搜索
+                const nameMatch = customer.name.includes(searchTerm);
+                // 按手机尾号搜索（提取后4位）
+                const phoneMatch = customer.phone && customer.phone.slice(-4) === searchTerm;
+                return nameMatch || phoneMatch;
+            });
+            
+            // 筛选当前店员的客户
+            if (currentMode === 'personal' && clerks[currentClerk]) {
+                matchedCustomers = matchedCustomers.filter(customer => 
+                    clerks[currentClerk].customers.includes(customer.id)
+                );
+            } else if (currentMode === 'global') {
+                matchedCustomers = matchedCustomers.filter(customer => {
+                    const customerClerk = customer.clerk;
+                    return customerClerk && clerks[customerClerk] && clerks[customerClerk].shop === currentShop;
+                });
+            }
+            
+            if (matchedCustomers.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        未找到匹配的顾客
+                    </div>
+                `;
+                return;
+            }
+            
+            // 获取已处理的预警
+            const processedReminders = JSON.parse(localStorage.getItem('processedReminders')) || [];
+            
+            // 生成搜索结果
+            let resultsHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            `;
+            
+            matchedCustomers.forEach(customer => {
+                if (customer.products) {
+                    Object.entries(customer.products).forEach(([product, data]) => {
+                        const prediction = calculateProductPrediction(customer, product);
+                        if (prediction) {
+                            // 获取门店记忆的商品每件数量
+                            const shopPerPackage = getProductPackageFromShop(product);
+                            // 确定使用的每件数量
+                            const perPackageValue = data.per_package || shopPerPackage || 0;
+                            
+                            // 检查是否需要提醒，并且该顾客是当前店员负责的，且未处理
+                            const isProcessed = processedReminders.some(item => 
+                                item.user_name === customer.name && item.product_name === product
+                            );
+                            const needReminder = customer.clerk === currentClerk && prediction.daily_usage > 0 && prediction.remaining_days <= 3 && !isProcessed;
+                            
+                            resultsHTML += `
+                                <div style="background: white; border-radius: var(--border-radius); padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); ${needReminder ? 'background-color: #ffebee; border-left: 4px solid #ff4757;' : ''};">
+                                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                        ${needReminder ? `<span style="display: inline-block; width: 8px; height: 8px; background-color: #ff4757; border-radius: 50%; margin-right: 8px;"></span>` : ''}
+                                        <h5 style="margin: 0 0 10px 0; color: #333;">${customer.name} - ${product}</h5>
+                                    </div>
+                                    <div class="info-grid" style="grid-template-columns: 1fr;">
+                                        <div class="info-item">
+                                            <label>已拿走数量</label>
+                                            <div class="value">${prediction.used} 件</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>一件包含多少个</label>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <input type="number" id="perPackage-${customer.name}-${product}" value="${perPackageValue}" min="1" step="1" style="flex: 1; padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                                <span style="white-space: nowrap;">个/件</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>一天吃多少个</label>
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <input type="number" id="dailyCount-${customer.name}-${product}" value="${data.daily_count || 0}" min="0" step="0.1" style="flex: 1; padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;">
+                                                <span style="white-space: nowrap;">个/天</span>
+                                                <button class="btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="saveDailyUsage('${customer.name}', '${product}', document.getElementById('perPackage-${customer.name}-${product}').value, document.getElementById('dailyCount-${customer.name}-${product}').value)">保存</button>
+                                            </div>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>每日用量</label>
+                                            <div class="value">${prediction.daily_usage ? prediction.daily_usage.toFixed(2) : '0.00'} 件/天</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>预计还能吃多少天</label>
+                                            <div class="value">${prediction.remaining_days || '无数据'} 天</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>提醒建议</label>
+                                            <div class="value">${prediction.remind_text}</div>
+                                        </div>
+                                        ${needReminder ? `
+                                        <div class="info-item">
+                                            <label>操作</label>
+                                            <div class="value">
+                                                <button class="btn-primary" style="padding: 8px 12px; font-size: 12px;" onclick="markAsProcessed('${customer.name}', '${product}')">标记已处理</button>
+                                            </div>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+            });
+            
+            resultsHTML += `
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultsHTML;
+        }
+        
+        // 初始化
+        window.onload = function() {
+            // 初始化数据结构
+            if (!localStorage.getItem('fullSystemClerks')) {
+                localStorage.setItem('fullSystemClerks', JSON.stringify({}));
+            }
+            if (!localStorage.getItem('fullSystemCustomers')) {
+                // 添加一些测试数据
+                const testCustomers = [
+                    {
+                        id: 1,
+                        name: '张三',
+                        phone: '13800138000',
+                        purchase: 10,
+                        trace: 5,
+                        clerk: '店员A',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        name: '李四',
+                        phone: '13900139000',
+                        purchase: 8,
+                        trace: 3,
+                        clerk: '店员B',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        name: '王五',
+                        phone: '13700137000',
+                        purchase: 5,
+                        trace: 2,
+                        clerk: '店员A',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('fullSystemCustomers', JSON.stringify(testCustomers));
+                customers = testCustomers;
+            } else {
+                // 加载现有数据并确保所有客户都有createdAt字段
+                customers = JSON.parse(localStorage.getItem('fullSystemCustomers'));
+                customers = customers.map(customer => {
+                    if (!customer.createdAt) {
+                        customer.createdAt = new Date().toISOString();
+                    }
+                    return customer;
+                });
+                // 保存更新后的数据
+                localStorage.setItem('fullSystemCustomers', JSON.stringify(customers));
+            }
+            if (!localStorage.getItem('fullSystemLogs')) {
+                // 添加一些测试日志数据
+                const testLogs = [
+                    {
+                        id: Date.now() - 86400000,
+                        clerk: '店员A',
+                        shop: '店铺A',
+                        customer: customers[0],
+                        operation: '新增客户',
+                        details: '创建客户: 张三 (13800138000)',
+                        timestamp: new Date(Date.now() - 86400000).toISOString(),
+                        date: formatDate(new Date(Date.now() - 86400000))
+                    },
+                    {
+                        id: Date.now() - 43200000,
+                        clerk: '店员B',
+                        shop: '店铺B',
+                        customer: customers[1],
+                        operation: '编辑客户数据',
+                        oldValue: '购8用3',
+                        newValue: '购10用3',
+                        details: '购买: 8→10, 已用: 3→3',
+                        timestamp: new Date(Date.now() - 43200000).toISOString(),
+                        date: formatDate(new Date(Date.now() - 43200000))
+                    },
+                    {
+                        id: Date.now(),
+                        clerk: '店员A',
+                        shop: '店铺A',
+                        customer: customers[2],
+                        operation: '编辑客户数据',
+                        oldValue: '购5用2',
+                        newValue: '购5用3',
+                        details: '购买: 5→5, 已用: 2→3',
+                        timestamp: new Date().toISOString(),
+                        date: formatDate(new Date())
+                    }
+                ];
+                localStorage.setItem('fullSystemLogs', JSON.stringify(testLogs));
+                logs = testLogs;
+            } else {
+                logs = JSON.parse(localStorage.getItem('fullSystemLogs'));
+            }
+            
+            // 绑定事件监听器
+            const newBuyQuantity = document.getElementById('newBuyQuantity');
+            const newTraceQuantity = document.getElementById('newTraceQuantity');
+            
+            if (newBuyQuantity) {
+                newBuyQuantity.addEventListener('input', updateRemainingTotal);
+            }
+            
+            if (newTraceQuantity) {
+                newTraceQuantity.addEventListener('input', updateRemainingTotal);
+            }
+            
+            // 检查提醒
+            setTimeout(checkCustomerReminders, 1000);
+        };
+    </script>
+</body>
+</html>
